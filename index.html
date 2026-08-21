@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0a0c10">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GymLog">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="GymLog">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<title>GymLog — Personal Training Tracker</title>
+<style>
+:root{
+ --bg:#090b0f;--surface:#11141a;--surface2:#181c24;--surface3:#202631;--line:#2a303a;
+ --text:#f5f7fb;--muted:#9299a7;--accent:#6d8cff;--accent2:#8b5cf6;--good:#34d399;--warn:#fbbf24;--danger:#fb7185;
+ --shadow:0 16px 45px rgba(0,0,0,.28);--radius:20px
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:var(--bg)}
+body{margin:0;background:radial-gradient(circle at 80% -10%,#18203a 0,transparent 34%),var(--bg);color:var(--text);
+ font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif}
+button,input,select,textarea{font:inherit}button{border:0;cursor:pointer}
+button:active{transform:scale(.98)}
+.app{min-height:100vh;display:grid;grid-template-columns:245px 1fr}
+.sidebar{position:sticky;top:0;height:100vh;border-right:1px solid var(--line);padding:26px 15px;background:#0c0f14cc;backdrop-filter:blur(18px)}
+.brand{font-weight:900;font-size:23px;padding:0 12px 28px}.brand span{color:var(--accent)}
+.sidebtn{width:100%;text-align:left;background:transparent;color:var(--muted);padding:13px 14px;border-radius:13px;margin:2px 0}
+.sidebtn.active,.sidebtn:hover{background:var(--surface2);color:var(--text)}
+.sideicon{display:inline-block;width:25px}
+.main{min-width:0;max-width:1250px;width:100%;margin:auto;padding:25px 30px 55px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:24px}
+.top h1{margin:0;font-size:32px}.subtitle{color:var(--muted);margin-top:4px}
+.mobileNav{display:none}
+.screen{display:none}.screen.active{display:block}
+.grid{display:grid;gap:16px}.g4{grid-template-columns:repeat(4,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g2{grid-template-columns:repeat(2,1fr)}
+.card{background:linear-gradient(145deg,var(--surface),#101319);border:1px solid var(--line);border-radius:var(--radius);padding:19px;box-shadow:var(--shadow)}
+.card h3{margin:0 0 10px}.muted{color:var(--muted)}.tiny{font-size:12px;color:var(--muted)}
+.stat .big{font-size:29px;font-weight:900}.stat .label{font-size:12px;color:var(--muted);margin-top:4px}
+.primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:14px 17px;border-radius:14px;font-weight:800}
+.secondary{background:var(--surface3);color:var(--text);padding:12px 15px;border-radius:13px}
+.ghost{background:transparent;color:var(--muted);padding:10px;border-radius:11px}.ghost:hover{background:var(--surface2);color:var(--text)}
+.danger{background:#3a1e26;color:#ff8ca0;padding:10px 12px;border-radius:11px}
+.good{color:var(--good)}.warn{color:var(--warn)}
+.row{display:flex;gap:9px;align-items:center}.row>*{min-width:0}
+.actions{display:flex;gap:9px;flex-wrap:wrap}
+.actions>*{flex:0 0 auto}
+input,select,textarea{background:var(--surface3);border:1px solid var(--line);color:var(--text);border-radius:12px;padding:12px;width:100%;outline:none}
+textarea{min-height:90px;resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+.exercise{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:15px;margin-bottom:14px}
+.exHead{display:flex;align-items:center;justify-content:space-between;gap:12px}.exName{font-size:18px;font-weight:850}
+.setrow{display:grid;grid-template-columns:34px 1fr 1fr 75px 40px;gap:7px;align-items:center;margin-top:9px}
+.setno{text-align:center;color:var(--muted);font-size:13px}
+.setrow .done{width:100%;height:43px;background:#1e352d;color:var(--good);border-radius:10px}
+.setrow .done.off{background:var(--surface3);color:var(--muted)}
+.exBottom{display:flex;gap:8px;margin-top:12px}.exBottom button{flex:1}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;background:var(--surface3);border-radius:9px;color:var(--muted);font-size:12px}
+.hero{display:flex;justify-content:space-between;align-items:center;gap:18px}.heroText h2{font-size:28px;margin:0 0 6px}.heroText p{margin:0;color:var(--muted)}
+.quick{min-width:200px}
+.progressbar{height:10px;background:var(--surface3);border-radius:99px;overflow:hidden}.progressbar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.list{display:flex;flex-direction:column;gap:9px}.listitem{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--surface2);border-radius:14px;padding:12px}
+.historyItem{border:1px solid var(--line);border-radius:17px;padding:16px;background:var(--surface);margin-bottom:12px}
+.historyTitle{font-size:17px;font-weight:800}.exerciseLine{padding:9px 0;border-bottom:1px solid #232833}.exerciseLine:last-child{border-bottom:0}
+.modal{position:fixed;inset:0;background:#000a;display:none;align-items:flex-end;justify-content:center;z-index:100;padding:0}
+.modal.show{display:flex}.sheet{width:min(720px,100%);max-height:92vh;overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:24px 24px 0 0;padding:22px;padding-bottom:calc(22px + env(safe-area-inset-bottom))}
+.sheet h2{margin:0 0 16px}.field{margin:10px 0}.field label{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}
+.template{padding:15px;border:1px solid var(--line);border-radius:15px;background:var(--surface2);margin-bottom:9px}
+.timer{position:fixed;right:20px;bottom:22px;z-index:80;background:var(--surface2);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:18px;padding:13px 15px;display:none}.timer.show{display:block}.timer strong{font-size:26px;display:block;text-align:center}
+canvas{width:100%;height:240px;display:block}
+.toast{position:fixed;left:50%;bottom:92px;transform:translateX(-50%) translateY(20px);background:#eef2ff;color:#111827;padding:11px 15px;border-radius:13px;font-weight:700;opacity:0;pointer-events:none;transition:.25s;z-index:200}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.empty{text-align:center;color:var(--muted);padding:30px 10px}
+hr{border:0;border-top:1px solid var(--line);margin:18px 0}
+.kpi{font-size:12px;color:var(--muted)}.kpi b{font-size:17px;color:var(--text)}
+@media(max-width:850px){
+ .app{display:block}.sidebar{display:none}.main{padding:17px 15px 95px}.mobileNav{display:grid;position:fixed;z-index:90;left:0;right:0;bottom:0;height:72px;background:#0d1016ee;backdrop-filter:blur(18px);border-top:1px solid var(--line);grid-template-columns:repeat(5,1fr)}
+ .mobileNav button{background:none;color:var(--muted);font-size:10px}.mobileNav button.active{color:var(--accent)}.mobileNav span{display:block;font-size:20px;margin-bottom:3px}
+ .g4{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:1fr 1fr}.g2{grid-template-columns:1fr}.top{margin-bottom:15px}.top h1{font-size:27px}.hero{display:block}.quick{margin-top:15px}.setrow{grid-template-columns:25px 1fr 1fr 38px 35px}.setrow .done{font-size:0}.setrow .done:after{content:"✓";font-size:15px}
+}
+@media(max-width:430px){.g3{grid-template-columns:1fr}.actions .primary{width:100%}.heroText h2{font-size:24px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+ <div class="brand">Gym<span>Log</span> <small>3.0</small></div>
+ <button class="sidebtn active" data-screen="home"><span class="sideicon">⌂</span>Головна</button>
+ <button class="sidebtn" data-screen="workout"><span class="sideicon">🏋️</span>Тренування</button>
+ <button class="sidebtn" data-screen="history"><span class="sideicon">▤</span>Історія</button>
+ <button class="sidebtn" data-screen="progress"><span class="sideicon">↗</span>Прогрес</button>
+ <button class="sidebtn" data-screen="library"><span class="sideicon">▦</span>Вправи</button>
+ <hr>
+ <button class="sidebtn" data-screen="settings"><span class="sideicon">⚙</span>Налаштування</button>
+</aside>
+
+<main class="main">
+ <div class="top"><div><h1 id="pageTitle">Головна</h1><div class="subtitle" id="pageSub">Твій особистий журнал тренувань</div></div><div class="actions"><button class="secondary" onclick="openQuickStart()">＋ Швидкий старт</button></div></div>
+
+ <section id="home" class="screen active">
+  <div class="card hero">
+   <div class="heroText"><h2>Готовий до тренування?</h2><p>Запиши підходи — GymLog збереже решту.</p></div>
+   <button class="primary quick" onclick="startWorkout()">Почати тренування</button>
+  </div>
+  <div class="grid g4" style="margin-top:16px">
+   <div class="card stat"><div class="big" id="statWorkouts">0</div><div class="label">ТРЕНУВАНЬ</div></div>
+   <div class="card stat"><div class="big" id="statSets">0</div><div class="label">ПІДХОДІВ</div></div>
+   <div class="card stat"><div class="big" id="statVolume">0</div><div class="label">КГ ОБСЯГУ</div></div>
+   <div class="card stat"><div class="big" id="statPR">0</div><div class="label">PR</div></div>
+  </div>
+  <div class="grid g2" style="margin-top:16px">
+   <div class="card"><h3>Останнє тренування</h3><div id="lastWorkout"></div></div>
+   <div class="card"><h3>Найкращі вправи</h3><div id="topExercises"></div></div>
+  </div>
+  <div class="card" style="margin-top:16px"><h3>Цей тиждень</h3><div class="kpi"><b id="weekSets">0</b> підходів · <b id="weekVolume">0</b> кг обсягу</div><div class="progressbar" style="margin-top:12px"><i id="weekBar" style="width:0%"></i></div><div class="tiny" style="margin-top:6px">Ціль: 3 тренування на тиждень</div></div>
+ </section>
+
+ <section id="workout" class="screen">
+  <div class="card">
+   <div class="row"><div style="flex:1"><div class="tiny">ПОТОЧНЕ ТРЕНУВАННЯ</div><input id="workoutName" value="Нове тренування" style="font-size:20px;font-weight:800;margin-top:5px"></div><button class="danger" onclick="cancelWorkout()">Скасувати</button></div>
+   <div class="row" style="margin-top:12px"><span class="badge">⏱ <span id="workoutDuration">00:00</span></span><span class="badge">📦 <span id="workoutSetCount">0</span> підходів</span><span class="badge">🔥 <span id="workoutVolume">0</span> кг</span></div>
+  </div>
+  <div id="exerciseList"></div>
+  <div class="actions"><button class="secondary" onclick="openExercisePicker()">＋ Додати вправу</button><button class="secondary" onclick="openTemplates()">📋 Шаблон</button></div>
+  <button class="primary" style="width:100%;margin-top:12px" onclick="finishWorkout()">✓ Завершити тренування</button>
+ </section>
+
+ <section id="history" class="screen"><div class="card"><div class="row"><input id="historySearch" placeholder="Пошук тренувань або вправ..." oninput="renderHistory()"><button class="secondary" onclick="exportData()">Експорт</button></div></div><div id="historyList" style="margin-top:14px"></div></section>
+
+ <section id="progress" class="screen">
+  <div class="grid g2"><div class="card"><div class="field"><label>Вправа</label><select id="progressExercise" onchange="renderProgress()"></select></div><div class="kpi">Найкраща вага <b id="bestWeight">—</b></div><div class="kpi" style="margin-top:6px">Остання вага <b id="lastWeight">—</b></div></div><div class="card"><h3>Обсяг</h3><div class="kpi">Загалом <b id="exerciseVolume">0 кг</b></div><div class="kpi" style="margin-top:6px">Разів виконано <b id="exerciseCount">0</b></div></div></div>
+  <div class="card" style="margin-top:16px"><h3>Динаміка ваги</h3><canvas id="chart"></canvas></div>
+ </section>
+
+ <section id="library" class="screen"><div class="card"><div class="row"><input id="librarySearch" placeholder="Знайти вправу..." oninput="renderLibrary()"><button class="primary" onclick="openAddExerciseToLibrary()">＋</button></div></div><div id="libraryList" class="grid g3" style="margin-top:16px"></div></section>
+
+ <section id="settings" class="screen">
+  <div class="grid g2">
+   <div class="card"><h3>Профіль</h3><div class="field"><label>Ім'я</label><input id="profileName" oninput="saveSettings()"></div><div class="field"><label>Ціль тренувань на тиждень</label><input id="weeklyGoal" type="number" min="1" max="14" oninput="saveSettings()"></div></div>
+   <div class="card"><h3>Дані</h3><div class="actions"><button class="secondary" onclick="exportData()">⬇ Резервна копія</button><button class="secondary" onclick="document.getElementById('importFile').click()">⬆ Імпорт</button><input id="importFile" type="file" accept=".json" style="display:none" onchange="importData(event)"><button class="danger" onclick="resetData()">Видалити всі дані</button></div></div>
+  </div>
+  <div class="card" style="margin-top:16px"><h3>Що є в GymLog 3.0</h3><div class="list"><div class="listitem">⚡ Автопідстановка минулої ваги <span class="good">✓</span></div><div class="listitem">🏆 PR та найкращі підходи <span class="good">✓</span></div><div class="listitem">📈 Графік прогресу <span class="good">✓</span></div><div class="listitem">⏱ Таймер відпочинку <span class="good">✓</span></div><div class="listitem">📦 Шаблони та власна бібліотека вправ <span class="good">✓</span></div><div class="listitem">💾 Імпорт / експорт резервної копії <span class="good">✓</span></div><div class="listitem">📱 Адаптивний інтерфейс для телефону й ПК <span class="good">✓</span></div></div></div>
+ </section>
+</main>
+</div>
+
+<nav class="mobileNav">
+ <button class="active" data-screen="home"><span>⌂</span>Головна</button><button data-screen="workout"><span>🏋️</span>Зал</button><button data-screen="history"><span>▤</span>Історія</button><button data-screen="progress"><span>↗</span>Прогрес</button><button data-screen="settings"><span>⚙</span>Ще</button>
+</nav>
+
+<div class="timer" id="timer"><strong id="timerText">01:30</strong><button class="secondary" onclick="stopTimer()">Стоп</button></div>
+<div class="toast" id="toast"></div>
+<div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
+
+<script>
+const DEFAULT_EX=[
+"Жим лежачи","Жим гантелей на похилій лаві","Розведення гантелей","Віджимання на брусах",
+"Підтягування","Тяга верхнього блока","Тяга горизонтального блока","Тяга гантелі в нахилі",
+"Жим гантелей сидячи","Махи гантелями в сторони","Розгинання рук на блоці","Підйом гантелей на біцепс","Молотки",
+"Присідання","Жим ногами","Румунська тяга","Згинання ніг","Розгинання ніг","Підйоми на носки"
+];
+const TEMPLATES={
+"Push":["Жим лежачи","Жим гантелей на похилій лаві","Розведення гантелей","Жим гантелей сидячи","Розгинання рук на блоці"],
+"Pull":["Підтягування","Тяга верхнього блока","Тяга горизонтального блока","Підйом гантелей на біцепс","Молотки"],
+"Legs":["Присідання","Жим ногами","Румунська тяга","Згинання ніг","Підйоми на носки"]
+};
+const KEY="gymlog_final_v3";
+let db=JSON.parse(localStorage.getItem(KEY)||"null");
+if(!db) db={workouts:[],exercises:[...DEFAULT_EX],settings:{name:"",goal:3}};
+let current=null,startedAt=0,durationInt=null,timerInt=null,timerSec=90;
+
+function save(){localStorage.setItem(KEY,JSON.stringify(db))}
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function toast(t){let e=document.getElementById("toast");e.textContent=t;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),1800)}
+function fmt(n){return Math.round(n||0).toLocaleString("uk-UA")}
+function screenTitle(id){return ({home:["Головна","Огляд і статистика"],workout:["Тренування","Записуй підходи в реальному часі"],history:["Історія","Усі завершені тренування"],progress:["Прогрес","Твоя динаміка по вправах"],library:["Бібліотека вправ","Власні вправи та пошук"],settings:["Налаштування","Дані та резервні копії"]})[id]}
+function showScreen(id){
+ if(id==="workout"&&!current){startWorkout();return}
+ document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active");
+ document.querySelectorAll("[data-screen]").forEach(x=>x.classList.toggle("active",x.dataset.screen===id));
+ let t=screenTitle(id);document.getElementById("pageTitle").textContent=t[0];document.getElementById("pageSub").textContent=t[1];
+ if(id==="home")renderHome();if(id==="history")renderHistory();if(id==="progress"){setupProgress();renderProgress()}if(id==="library")renderLibrary();if(id==="settings")loadSettings();
+}
+document.querySelectorAll("[data-screen]").forEach(b=>b.onclick=()=>showScreen(b.dataset.screen));
+
+function previous(name){
+ for(const w of db.workouts){let e=w.exercises.find(x=>x.name===name);if(e?.sets?.length)return e.sets[e.sets.length-1]}return null
+}
+function startWorkout(name="Вільне тренування",names=[]){
+ current={id:Date.now(),date:new Date().toISOString(),name,started:Date.now(),notes:"",exercises:names.map(n=>({name:n,sets:[]}))};
+ document.getElementById("workoutName").value=name;startedAt=Date.now();startDuration();renderWorkout();showScreen("workout")
+}
+function startDuration(){clearInterval(durationInt);durationInt=setInterval(()=>{if(current){let s=Math.floor((Date.now()-startedAt)/1000);document.getElementById("workoutDuration").textContent=String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")}},1000)}
+function stopDuration(){clearInterval(durationInt)}
+function renderWorkout(){
+ if(!current)return;let c=document.getElementById("exerciseList");c.innerHTML="";
+ current.exercises.forEach((e,ei)=>{
+  let h=`<div class="exercise"><div class="exHead"><div><div class="exName">${esc(e.name)}</div>${e.prHint?`<span class="record">🏆 ${esc(e.prHint)}</span>`:""}</div><button class="danger" onclick="deleteExercise(${ei})">Видалити</button></div>`;
+  e.sets.forEach((s,si)=>h+=`<div class="setrow"><div class="setno">${si+1}</div><input type="number" min="0" step=".5" placeholder="кг" value="${s.weight??""}" oninput="changeSet(${ei},${si},'weight',this.value)"><input type="number" min="0" placeholder="повт." value="${s.reps??""}" oninput="changeSet(${ei},${si},'reps',this.value)"><button class="done ${s.done?"":"off"}" onclick="toggleDone(${ei},${si})" title="Підхід виконано">✓</button><button class="danger" onclick="deleteSet(${ei},${si})">×</button></div>`);
+  h+=`<div class="exBottom"><button class="secondary" onclick="addSet(${ei})">＋ Підхід</button><button class="secondary" onclick="startTimer(90)">⏱ 1:30</button></div></div>`;c.innerHTML+=h;
+ });
+ updateWorkoutStats()
+}
+function addSet(ei){let e=current.exercises[ei],p=previous(e.name);e.sets.push({weight:p?.weight??"",reps:p?.reps??"",done:false});renderWorkout()}
+function changeSet(ei,si,k,v){current.exercises[ei].sets[si][k]=v;updateWorkoutStats()}
+function toggleDone(ei,si){let s=current.exercises[ei].sets[si];s.done=!s.done;renderWorkout();if(s.done)startTimer(90)}
+function deleteSet(ei,si){current.exercises[ei].sets.splice(si,1);renderWorkout()}
+function deleteExercise(ei){current.exercises.splice(ei,1);renderWorkout()}
+function updateWorkoutStats(){let sets=current?.exercises.reduce((a,e)=>a+e.sets.length,0)||0,vol=current?.exercises.reduce((a,e)=>a+e.sets.reduce((b,s)=>b+(+s.weight||0)*(+s.reps||0),0),0)||0;document.getElementById("workoutSetCount").textContent=sets;document.getElementById("workoutVolume").textContent=fmt(vol)}
+function cancelWorkout(){if(confirm("Скасувати незбережене тренування?")){current=null;stopDuration();showScreen("home")}}
+function finishWorkout(){
+ if(!current.exercises.length)return toast("Додай хоча б одну вправу");
+ let valid=current.exercises.some(e=>e.sets.some(s=>(+s.weight||0)>0&&(+s.reps||0)>0));if(!valid)return toast("Заповни хоча б один підхід");
+ current.name=document.getElementById("workoutName").value.trim()||"Тренування";current.duration=Math.floor((Date.now()-startedAt)/1000);
+ db.workouts.unshift(current);save();current=null;stopDuration();toast("Тренування збережено 💪");showScreen("home")
+}
+function openExercisePicker(){
+ let q=`<h2>Додати вправу</h2><input id="exerciseSearch" placeholder="Пошук..." oninput="filterExercisePicker()"><div id="pickerList" style="margin-top:10px"></div><button class="secondary" style="width:100%;margin-top:10px" onclick="openAddExerciseToLibrary(true)">＋ Створити нову</button>`;
+ openModal(q);filterExercisePicker()
+}
+function filterExercisePicker(){
+ let q=(document.getElementById("exerciseSearch")?.value||"").toLowerCase(),arr=db.exercises.filter(x=>x.toLowerCase().includes(q));
+ document.getElementById("pickerList").innerHTML=arr.map(n=>`<button class="template" style="width:100%;text-align:left" onclick='addCurrentExercise(${JSON.stringify(n)})'>🏋️ ${esc(n)}</button>`).join("")||'<div class="empty">Нічого не знайдено</div>'
+}
+function addCurrentExercise(n){current.exercises.push({name:n,sets:[]});closeModal();renderWorkout()}
+function openTemplates(){
+ let q="<h2>Шаблони</h2>"+Object.entries(TEMPLATES).map(([n,a])=>`<div class="template"><b>${n}</b><div class="tiny">${a.join(" · ")}</div><button class="primary" style="margin-top:10px" onclick='useTemplate(${JSON.stringify(n)})'>Почати</button></div>`).join("");
+ openModal(q)
+}
+function useTemplate(n){closeModal();startWorkout(n,TEMPLATES[n])}
+function openQuickStart(){openTemplates()}
+function openModal(html){document.getElementById("sheet").innerHTML=html;document.getElementById("modal").classList.add("show")}
+function closeModal(){document.getElementById("modal").classList.remove("show")}
+
+function renderHome(){
+ let sets=0,vol=0,prs=0;db.workouts.forEach(w=>w.exercises.forEach(e=>e.sets.forEach(s=>{sets++;vol+=(+s.weight||0)*(+s.reps||0)})));
+ let prMap={};db.workouts.forEach(w=>w.exercises.forEach(e=>e.sets.forEach(s=>{let v=+s.weight||0;if(v>0){if(!prMap[e.name]||v>prMap[e.name]){prMap[e.name]=v}}})));
+ prs=Object.keys(prMap).length;document.getElementById("statWorkouts").textContent=db.workouts.length;document.getElementById("statSets").textContent=sets;document.getElementById("statVolume").textContent=fmt(vol);document.getElementById("statPR").textContent=prs;
+ let l=document.getElementById("lastWorkout");if(!db.workouts.length)l.innerHTML='<div class="empty">Ще немає тренувань.<br>Почнемо? 😎</div>';else{let w=db.workouts[0];l.innerHTML=`<b>${esc(w.name)}</b><div class="tiny">${new Date(w.date).toLocaleString("uk-UA",{dateStyle:"medium",timeStyle:"short"})}</div><div style="margin-top:9px">${w.exercises.map(e=>`<span class="badge">${esc(e.name)}</span>`).join(" ")}</div>`}
+ let tops=Object.entries(prMap).sort((a,b)=>b[1]-a[1]).slice(0,5);document.getElementById("topExercises").innerHTML=tops.length?tops.map(x=>`<div class="listitem"><span>${esc(x[0])}</span><b>${x[1]} кг</b></div>`).join(""):'<div class="empty">Після тренувань тут зʼявляться PR.</div>';
+ let week=new Date();week.setDate(week.getDate()-((week.getDay()+6)%7));week.setHours(0,0,0,0);let ww=db.workouts.filter(w=>new Date(w.date)>=week),ws=0,wv=0;ww.forEach(w=>w.exercises.forEach(e=>e.sets.forEach(s=>{ws++;wv+=(+s.weight||0)*(+s.reps||0)})));document.getElementById("weekSets").textContent=ws;document.getElementById("weekVolume").textContent=fmt(wv);let goal=+db.settings.goal||3;document.getElementById("weekBar").style.width=Math.min(100,ww.length/goal*100)+"%"
+}
+function renderHistory(){
+ let q=(document.getElementById("historySearch")?.value||"").toLowerCase(),arr=db.workouts.filter(w=>(w.name+" "+w.exercises.map(e=>e.name).join(" ")).toLowerCase().includes(q)),c=document.getElementById("historyList");
+ if(!arr.length){c.innerHTML='<div class="empty">Нічого не знайдено</div>';return}
+ c.innerHTML=arr.map(w=>`<div class="historyItem"><div class="row"><div style="flex:1"><div class="historyTitle">${esc(w.name)}</div><div class="tiny">${new Date(w.date).toLocaleString("uk-UA",{dateStyle:"medium",timeStyle:"short"})} · ${Math.floor((w.duration||0)/60)} хв</div></div><button class="danger" onclick="deleteWorkout('${w.id}')">Видалити</button></div>${w.exercises.map(e=>`<div class="exerciseLine"><b>${esc(e.name)}</b><div class="tiny">${e.sets.map(s=>`${s.weight||0} кг × ${s.reps||0}${s.done?" ✓":""}`).join(" · ")}</div></div>`).join("")}</div>`).join("")
+}
+function deleteWorkout(id){if(confirm("Видалити тренування?")){db.workouts=db.workouts.filter(w=>String(w.id)!==String(id));save();renderHistory();renderHome()}}
+
+function setupProgress(){
+ let names=[...new Set(db.workouts.flatMap(w=>w.exercises.map(e=>e.name)))].sort(),s=document.getElementById("progressExercise");s.innerHTML=names.length?names.map(n=>`<option>${esc(n)}</option>`).join(""):"<option>Немає даних</option>"
+}
+function renderProgress(){
+ let name=document.getElementById("progressExercise").value,rows=[];db.workouts.slice().reverse().forEach(w=>{let e=w.exercises.find(x=>x.name===name);if(e){let best=Math.max(...e.sets.map(s=>+s.weight||0),0),vol=e.sets.reduce((a,s)=>a+(+s.weight||0)*(+s.reps||0),0);rows.push({date:new Date(w.date),best,vol})}});
+ if(!rows.length){document.getElementById("bestWeight").textContent="—";document.getElementById("lastWeight").textContent="—";document.getElementById("exerciseVolume").textContent="0 кг";document.getElementById("exerciseCount").textContent="0";return}
+ document.getElementById("bestWeight").textContent=Math.max(...rows.map(r=>r.best))+" кг";document.getElementById("lastWeight").textContent=rows.at(-1).best+" кг";document.getElementById("exerciseVolume").textContent=fmt(rows.reduce((a,r)=>a+r.vol,0))+" кг";document.getElementById("exerciseCount").textContent=rows.length;drawChart(rows)
+}
+function drawChart(rows){
+ let c=document.getElementById("chart"),ctx=c.getContext("2d"),d=devicePixelRatio||1,w=c.clientWidth,h=240;c.width=w*d;c.height=h*d;ctx.scale(d,d);ctx.clearRect(0,0,w,h);
+ let max=Math.max(...rows.map(r=>r.best),1),min=0,pad=30;ctx.strokeStyle="#2a303a";ctx.lineWidth=1;for(let i=0;i<4;i++){let y=pad+i*(h-pad*2)/3;ctx.beginPath();ctx.moveTo(pad,y);ctx.lineTo(w-pad,y);ctx.stroke()}
+ ctx.strokeStyle="#6d8cff";ctx.lineWidth=3;ctx.beginPath();rows.forEach((r,i)=>{let x=pad+(w-pad*2)*(rows.length===1?.5:i/(rows.length-1)),y=h-pad-(r.best-min)/(max-min||1)*(h-pad*2);i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.stroke();
+ rows.forEach((r,i)=>{let x=pad+(w-pad*2)*(rows.length===1?.5:i/(rows.length-1)),y=h-pad-r.best/(max||1)*(h-pad*2);ctx.fillStyle="#8b5cf6";ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fill()})
+}
+function renderLibrary(){
+ let q=(document.getElementById("librarySearch")?.value||"").toLowerCase(),arr=db.exercises.filter(x=>x.toLowerCase().includes(q)),c=document.getElementById("libraryList");
+ c.innerHTML=arr.map(n=>`<div class="card"><b>${esc(n)}</b><div class="tiny" style="margin-top:6px">${countExercise(n)} тренувань</div><button class="secondary" style="margin-top:10px;width:100%" onclick='libraryStart(${JSON.stringify(n)})'>Почати з цієї вправи</button></div>`).join("")||'<div class="empty">Вправу не знайдено</div>'
+}
+function countExercise(n){return db.workouts.filter(w=>w.exercises.some(e=>e.name===n)).length}
+function libraryStart(n){startWorkout("Вільне тренування",[n])}
+function openAddExerciseToLibrary(fromPicker=false){
+ openModal(`<h2>Нова вправа</h2><div class="field"><label>Назва</label><input id="libName" placeholder="Наприклад: Face Pull"></div><div class="actions"><button class="secondary" onclick="closeModal()">Скасувати</button><button class="primary" onclick="saveNewExercise(${fromPicker})">Зберегти</button></div>`)
+}
+function saveNewExercise(fromPicker){let n=document.getElementById("libName").value.trim();if(!n)return toast("Введи назву");if(!db.exercises.includes(n))db.exercises.push(n);save();closeModal();if(fromPicker){openExercisePicker()}else renderLibrary();toast("Вправу додано")}
+function loadSettings(){document.getElementById("profileName").value=db.settings.name||"";document.getElementById("weeklyGoal").value=db.settings.goal||3}
+function saveSettings(){db.settings.name=document.getElementById("profileName").value;db.settings.goal=+document.getElementById("weeklyGoal").value||3;save();renderHome()}
+function exportData(){
+ let blob=new Blob([JSON.stringify(db,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="gymlog-backup.json";a.click();URL.revokeObjectURL(a.href);toast("Резервну копію створено")
+}
+function importData(ev){
+ let f=ev.target.files[0];if(!f)return;let r=new FileReader();r.onload=()=>{try{let x=JSON.parse(r.result);if(!x.workouts||!x.exercises)throw 0;db=x;save();renderHome();toast("Дані імпортовано")}catch(e){alert("Файл не схожий на резервну копію GymLog.")}};r.readAsText(f)
+}
+function resetData(){if(confirm("Точно видалити ВСІ тренування та налаштування?")){localStorage.removeItem(KEY);location.reload()}}
+function openQuickStart(){openTemplates()}
+function startTimer(sec=90){stopTimer();timerSec=sec;document.getElementById("timer").classList.add("show");tickTimer();timerInt=setInterval(()=>{timerSec--;tickTimer();if(timerSec<=0){stopTimer();if(navigator.vibrate)navigator.vibrate([250,100,250]);toast("Відпочинок закінчився 💪")}},1000)}
+function tickTimer(){document.getElementById("timerText").textContent=String(Math.floor(timerSec/60)).padStart(2,"0")+":"+String(timerSec%60).padStart(2,"0")}
+function stopTimer(){clearInterval(timerInt);document.getElementById("timer").classList.remove("show")}
+document.getElementById("modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal()});
+renderHome();
+</script>
+
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js").catch(err => {
+      console.warn("GymLog offline mode could not be enabled:", err);
+    });
+  });
+}
+</script>
+
+</body>
+</html>
